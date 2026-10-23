@@ -49,7 +49,7 @@ class Catalog
       fetched = url.present? ? fetch_remote : nil
       catalog = case fetched
       when :not_modified then @last_fetched
-      when Hash then unchanged?(fetched) ? @last_fetched : new(fetched)
+      when Hash then build(fetched)
       end
 
       if catalog
@@ -95,6 +95,16 @@ class Catalog
     def keep(catalog, ttl)
       @entry = Entry.new(catalog:, expires_at: clock + ttl.to_i)
       catalog
+    end
+
+    # A catalog that does not build counts as a failed fetch. Its ETag is forgotten, so the next
+    # poll downloads it again instead of being told it is unchanged and never retrying.
+    def build(data)
+      unchanged?(data) ? @last_fetched : new(data)
+    rescue StandardError => e
+      Rails.logger.error("[catalog] build failed: #{e.class}: #{e.message}")
+      @etag = nil
+      nil
     end
 
     def unchanged?(data)

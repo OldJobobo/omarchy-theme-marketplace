@@ -95,6 +95,14 @@ class PagesTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
+  test "a dot in the slug is part of the slug, not a format" do
+    assert_equal "/themes/nujabes.v2", theme_path("nujabes.v2")
+    get "/themes/nujabes.v2"
+    assert_response :not_found
+    get "/themes/nujabes.json"
+    assert_response :not_found
+  end
+
   test "artists index lists every artist ranked by theme count" do
     get artists_path
     assert_response :success

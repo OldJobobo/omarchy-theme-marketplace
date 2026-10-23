@@ -18,7 +18,7 @@ Omarchy drops anything that could run code when a theme is installed from a repo
 Fill out the [**Submit a theme**](https://github.com/omacom/omarchy-theme-registry/issues/new?template=submit-theme.yml) form with your repository URL. That's the whole submission.
 
 1. A bot validates your repository the same way Omarchy installs it, and comments the report on your issue — usually within minutes.
-2. **Passed:** a pull request is opened and merged for you. No extra step.
+2. **Passed:** a pull request is opened for a maintainer to merge. Once it is merged, your theme appears with the next catalog build, which runs every six hours.
 3. **Needs changes:** fix your repository, then comment `/recheck` on your issue. No need to start over.
 
 Once listed, the marketplace follows your repository's default branch — push changes and the listing updates on the next refresh (every six hours). Updates never need a new submission.

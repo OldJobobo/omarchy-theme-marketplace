@@ -5,7 +5,8 @@ class ApplicationController < ActionController::Base
   helper_method :catalog
 
   rescue_from NotFound do
-    render "errors/not_found", status: :not_found
+    # HTML whatever the path ends in: a slug like "foo.json" would otherwise ask for a JSON template.
+    render "errors/not_found", status: :not_found, formats: :html
   end
 
   private

@@ -121,5 +121,19 @@ class CatalogTest < ActiveSupport::TestCase
       cdn(nil)
       assert_equal Catalog.new(Catalog.snapshot).size, Catalog.current.size
     end
+
+    test "a catalog that does not build falls back to the snapshot on a cold boot" do
+      cdn(published("not a date"))
+      assert_equal Catalog.new(Catalog.snapshot).size, Catalog.current.size
+    end
+
+    test "a catalog that does not build keeps the last one and is downloaded again" do
+      cdn(published("2026-10-01T00:00:00Z"))
+      Catalog.refresh
+      Catalog.instance_variable_set(:@etag, "\"bad\"")
+      cdn(published("not a date", count: 4))
+      assert_equal 3, Catalog.refresh.size
+      assert_nil Catalog.instance_variable_get(:@etag), "next poll must not send If-None-Match"
+    end
   end
 end
