@@ -10,6 +10,9 @@ Rails.application.routes.draw do
   get "guide", to: "guide#show", defaults: { page: "index" }, as: :guide
   get "guide/:page", to: "guide#show", as: :guide_page, constraints: { page: /[a-z0-9-]+/ }
 
+  get "sitemap.xml", to: "seo#sitemap", as: :sitemap, format: false, defaults: { format: :xml }
+  get "robots.txt", to: "seo#robots", as: :robots, format: false
+
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   get "up" => "rails/health#show", as: :rails_health_check
 end

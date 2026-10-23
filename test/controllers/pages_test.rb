@@ -145,6 +145,72 @@ class PagesTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
+  test "gallery cards offer the thumbnail in a srcset" do
+    get root_path
+    theme = Catalog.new(Catalog.snapshot).themes.find(&:featured?)
+    assert_select "[data-slot=card] img[srcset*=?][srcset*=?][sizes][loading=lazy]",
+      "#{theme.thumb} 480w", "#{theme.image} 1200w"
+  end
+
+  test "theme page hero image loads first" do
+    get theme_path("nujabes")
+    assert_select "figure img[fetchpriority=high]"
+    assert_select "figure img[loading]", count: 0
+  end
+
+  test "home canonical drops gallery params and the page has social tags" do
+    get root_path(filter: "light", page: 2)
+    assert_response :success
+    assert_select "link[rel=canonical][href=?]", root_url
+    assert_select "meta[property='og:url'][content=?]", root_url
+    assert_select "meta[property='og:image'][content^='https://']"
+    assert_select "meta[name='twitter:card'][content=summary_large_image]"
+  end
+
+  test "artists, artist and guide pages have canonical and og tags" do
+    { artists_path(sort: "name") => artists_url, artist_path("HalmyLyseas") => artist_url("HalmyLyseas"),
+      guide_path => guide_url }.each do |path, canonical|
+      get path
+      assert_response :success
+      assert_select "link[rel=canonical][href=?]", canonical
+      assert_select "meta[property='og:title']"
+      assert_select "meta[property='og:image']"
+    end
+    assert_select "meta[name=description][content*=?]", "submit it to the marketplace"
+  end
+
+  test "artist pages redirect to the catalog's spelling of the login" do
+    get artist_path("halmylyseas")
+    assert_response :moved_permanently
+    assert_redirected_to artist_path("HalmyLyseas")
+  end
+
+  test "sitemap lists the pages, every theme and every artist" do
+    get sitemap_path
+    assert_response :success
+    assert_equal "application/xml", response.media_type
+    catalog = Catalog.new(Catalog.snapshot)
+    xml = Nokogiri::XML(response.body)
+    xml.remove_namespaces!
+    locs = xml.xpath("//url/loc").map(&:text)
+    assert_includes locs, root_url
+    assert_includes locs, guide_url
+    assert_includes locs, artists_url
+    assert_includes locs, theme_url("nujabes")
+    assert_includes locs, artist_url("HalmyLyseas")
+    assert_equal 3 + catalog.size + catalog.artists.size, locs.size
+    nujabes = xml.xpath("//url[loc=$loc]/lastmod", nil, loc: theme_url("nujabes")).text
+    assert_equal catalog.find("nujabes").pushed_at.utc.iso8601, nujabes
+  end
+
+  test "robots.txt allows everything and points at the sitemap" do
+    get "/robots.txt"
+    assert_response :success
+    assert_equal "text/plain", response.media_type
+    assert_match(/^Allow: \/$/, response.body)
+    assert_match(/^Sitemap: #{Regexp.escape(sitemap_url)}$/, response.body)
+  end
+
   private
     # Derived from the snapshot, not hardcoded: the catalog is refreshed regularly
     # and a bulk import can hand the lead to a different artist at any time.

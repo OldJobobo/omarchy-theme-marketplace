@@ -3,7 +3,10 @@
     <% if theme.new? %>
       <%= ui_badge "New", class: "absolute top-2 left-2 z-10" %>
     <% end %>
-    <%= image_tag theme.image, alt: "#{theme.name} theme preview", loading: "lazy", width: 1200, height: 675,
+    <%# Cards sit in a 1 / 2 / 3 column grid (sm, lg) inside max-w-6xl with px-4 / px-6 and gap-5. %>
+    <%= image_tag theme.image, srcset: { theme.thumb => "480w", theme.image => "1200w" },
+          sizes: "(min-width: 1152px) 355px, (min-width: 1024px) calc((100vw - 88px) / 3), (min-width: 640px) calc((100vw - 68px) / 2), calc(100vw - 32px)",
+          alt: "#{theme.name} theme preview", loading: "lazy", width: 1200, height: 675,
           style: "background-color: #{theme.placeholder}",
           class: "aspect-video w-full border-b border-border object-cover transition-transform duration-300 ease-out group-hover:scale-105" %>
   </a>

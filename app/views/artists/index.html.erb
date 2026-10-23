@@ -1,5 +1,9 @@
 <% content_for :title, "Artists — Omarchy Themes" %>
 <% content_for :description, "Everyone with a theme in the Omarchy marketplace, ranked by themes published." %>
+<% content_for :head do %>
+  <%= render "shared/social_meta", title: "Artists — Omarchy Themes",
+        description: "Everyone with a theme in the Omarchy marketplace, ranked by themes published.", url: artists_url %>
+<% end %>
 <section class="border-b border-border">
   <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6">
     <nav aria-label="Breadcrumb" class="text-xs text-muted-foreground">

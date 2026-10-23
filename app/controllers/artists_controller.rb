@@ -12,5 +12,7 @@ class ArtistsController < ApplicationController
     @themes = catalog.by_artist(@login).sort_by { |t| t.name.downcase }
     raise NotFound, "No themes by #{@login}" if @themes.empty?
     @login = @themes.first.artist_login
+    # /artists/foo and /artists/FOO are the same page; send both to the catalog's spelling.
+    redirect_to artist_path(@login), status: :moved_permanently if params[:login] != @login
   end
 end

@@ -1,4 +1,9 @@
 <% content_for :title, "#{@title} — Omarchy Themes" %>
+<% description = "How to make an Omarchy theme, submit it to the marketplace, what the validation checks, and how to install, update and remove themes." %>
+<% content_for :description, description %>
+<% content_for :head do %>
+  <%= render "shared/social_meta", title: "#{@title} — Omarchy Themes", description: description, url: guide_url %>
+<% end %>
 <% toc = [
   [ "make-a-theme", "Make a theme" ],
   [ "submit-a-theme", "Submit a theme" ],

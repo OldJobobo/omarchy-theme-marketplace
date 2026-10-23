@@ -138,6 +138,10 @@ class Catalog
   def by_artist(login) = @by_artist.fetch(login.to_s.downcase, [])
   def new_themes = @themes.select(&:new?)
 
+  # The theme that stands for the whole catalog where a page needs one image (og:image on pages
+  # about no particular theme): the first featured theme, else the first theme.
+  def cover = @themes.find(&:featured?) || @themes.first
+
   # The themes whose palettes look most like `theme`'s. Worked out per request rather than for
   # every pair up front, which would grow with the square of the catalog.
   def similar_to(theme, limit: 3)

@@ -1,3 +1,9 @@
+<%# Filtered and paged gallery URLs all point their canonical at the plain home page. %>
+<% content_for :head do %>
+  <%= render "shared/social_meta", title: "Omarchy Themes — the Omarchy theme marketplace",
+        description: "Browse, preview, and install color themes for Omarchy. A community marketplace built on top of the Omarchy Linux desktop.",
+        url: root_url %>
+<% end %>
 <%= render "home/hero", query: @query %>
 <%= render "home/gallery", query: @query %>
 <%= render "home/stats", stats: @stats, top_artists: @top_artists %>

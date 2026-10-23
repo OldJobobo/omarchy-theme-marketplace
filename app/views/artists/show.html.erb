@@ -1,5 +1,10 @@
 <% content_for :title, "Themes by #{@login} — Omarchy Themes" %>
 <% content_for :description, "#{pluralize(@themes.size, 'community theme')} for Omarchy by #{@login}." %>
+<% content_for :head do %>
+  <%= render "shared/social_meta", title: "Themes by #{@login} — Omarchy Themes",
+        description: "#{pluralize(@themes.size, 'community theme')} for Omarchy by #{@login}.",
+        url: artist_url(@login), theme: @themes.find(&:featured?) || @themes.max_by(&:stars) %>
+<% end %>
 <section class="border-b border-border">
   <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6">
     <nav aria-label="Breadcrumb" class="text-xs text-muted-foreground">

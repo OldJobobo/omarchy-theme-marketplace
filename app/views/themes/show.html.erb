@@ -2,15 +2,9 @@
 <% content_for :description, (@theme.description.presence || "#{@theme.name}, a #{@theme.mode} community theme for Omarchy by #{@theme.artist_login}.") %>
 <% content_for :body_style, theme_primary_style(@theme) %>
 <% content_for :head do %>
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="<%= @theme.name %> — Omarchy theme">
-  <meta property="og:description" content="<%= @theme.description.presence || "A #{@theme.mode} community theme for Omarchy by #{@theme.artist_login}." %>">
-  <meta property="og:image" content="<%= @theme.image %>">
-  <meta property="og:image:width" content="<%= @theme.preview["width"] %>">
-  <meta property="og:image:height" content="<%= @theme.preview["height"] %>">
-  <meta property="og:url" content="<%= theme_url(@theme) %>">
-  <meta name="twitter:card" content="summary_large_image">
-  <link rel="canonical" href="<%= theme_url(@theme) %>">
+  <%= render "shared/social_meta", title: "#{@theme.name} — Omarchy theme",
+        description: @theme.description.presence || "A #{@theme.mode} community theme for Omarchy by #{@theme.artist_login}.",
+        url: theme_url(@theme), theme: @theme %>
 <% end %>
 
 <section class="border-b border-border">
@@ -47,7 +41,7 @@
     </div>
 
     <figure class="mt-8 border border-border" style="background-color: <%= @theme.placeholder %>">
-      <%= image_tag @theme.image, alt: "#{@theme.name} theme preview", width: 1200, height: 675, class: "aspect-video w-full object-cover" %>
+      <%= image_tag @theme.image, alt: "#{@theme.name} theme preview", width: 1200, height: 675, fetchpriority: "high", class: "aspect-video w-full object-cover" %>
     </figure>
 
     <%# Install: one full-width bar so the command never has to truncate. %>
