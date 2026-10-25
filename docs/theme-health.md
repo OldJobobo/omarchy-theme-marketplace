@@ -6,7 +6,8 @@ This is a read-only presentation of optional `health` data published by `omacom/
 
 - A muted 16px clipboard and letter beside GitHub stars link to the detail page's `#theme-health` anchor, escaping the gallery Turbo Frame. The letter and icon keep the same muted color on hover; keyboard focus has an outline.
 - Only a valid report whose `commit` exactly matches the catalog theme's `commit` gets a letter. Provisional grades retain `*`. Missing, unsupported, malformed, ungraded and outdated reports have no current letter.
-- The report card retains the five areas and the analyzer's letters, including capped grades. Findings expose safe scalar measurements, targets, source keys, methodology and remediation. Color previews are illustrative displays of rounded evidence, not fresh browser measurements. OKLab fill distance is not presented as text contrast.
+- The report card retains the five areas and the analyzer's letters, including capped grades. Both issues and passing checks expand to expose safe scalar measurements, targets, source keys, methodology and remediation. Passing checks stay behind a compact, collapsed group until requested. Color previews are illustrative displays of rounded evidence, not fresh browser measurements. OKLab fill distance is not presented as text contrast.
+- Check times display in UTC using a non-mutating conversion, including reports supplied with numeric timezone offsets. The original timestamp remains unchanged in the shared frozen report and public JSON.
 - `GET /themes/:slug/health` returns the current public report as JSON. Missing/outdated data is 404; it never triggers analysis.
 
 The site intentionally has no grade filter, grade-based sorting, installation gate, artist notification, account, review score or popularity change.
@@ -50,6 +51,10 @@ The overall grade and five expandable areas retain their measured results, with 
 An expanded finding exposes the analyzer's measured ratio, target, suggested improvement and source keys.
 
 <img src="images/theme-health/finding-evidence.webp" alt="Expanded selected terminal text finding showing 3.886 to 1 measured contrast against a 4.5 to 1 target" width="802">
+
+Passing checks use the same evidence disclosure, nested under the compact "checks meet targets" group. This passing terminal check shows why no change is needed; keyboard focus is visible on its summary.
+
+<img src="images/theme-health/passing-evidence.webp" alt="Expanded passing terminal text check showing 7.224 to 1 measured contrast against a 4.5 to 1 target, with source keys and a visible keyboard focus outline" width="802">
 
 ### Provisional report on mobile
 

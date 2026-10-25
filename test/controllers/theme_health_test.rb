@@ -39,6 +39,7 @@ class ThemeHealthPagesTest < ActionDispatch::IntegrationTest
 
   test "stale grades disappear without removing the theme or its installation" do
     @health["commit"] = "2" * 40
+    @health["checked_at"] = "2026-10-22T10:16:46-07:00"
     install_report
     get theme_path(@entry["slug"])
     assert_response :success
@@ -70,6 +71,50 @@ class ThemeHealthPagesTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "&lt;script&gt;notExecutable()&lt;/script&gt;"
     assert_select "#theme-health [style*='color: #aaaaaa']"
     assert_select "#theme-health", text: /2\.25/
+  end
+
+  test "offset timestamps render in UTC without mutating the shared frozen report" do
+    [ "2026-10-22T17:16:46+00:00", "2026-10-23T01:16:46+08:00",
+      "2026-10-22T22:46:46+05:30", "2026-10-22T10:16:46-07:00" ].each do |timestamp|
+      @health["checked_at"] = timestamp
+      install_report
+      checked_at = Catalog.current.find!(@entry["slug"]).health.checked_at
+      original_offset = checked_at.utc_offset
+      assert checked_at.frozen?
+      2.times do
+        get theme_path(@entry["slug"])
+        assert_response :success
+        assert_select "#theme-health time", text: "October 22, 2026 17:16 UTC"
+        assert_equal original_offset, checked_at.utc_offset
+      end
+      get theme_health_path(@entry["slug"])
+      assert_response :success
+      assert_equal timestamp, response.parsed_body["checked_at"]
+    end
+  end
+
+  test "passing checks keep their evidence in nested disclosures" do
+    install_report
+    get theme_path(@entry["slug"])
+    assert_response :success
+    assert_select "[data-health-category=readability] details[data-health-passes]:not([open])" do
+      assert_select "summary", text: "10 checks meet targets"
+      assert_select "li > details[data-health-rule]", count: 10
+      assert_select "details[data-health-rule='readability.foundation']:not([open])" do
+        assert_select "summary", text: /Terminal text\s+Meets target/
+        assert_select "p", text: "Foundational text contrast"
+        assert_select "p", text: "Resolved colors"
+        assert_select "dl dt", text: "Measured"
+        assert_select "dl dd", text: "16.618:1"
+        assert_select "dl dt", text: "Target"
+        assert_select "dl dd", text: "4.5:1"
+        assert_select "[style*='color: #f0f2f4']"
+        assert_select "p span", text: "What could improve"
+        assert_select "p span", text: "No change needed."
+        assert_select "li", text: "colors.toml → foreground"
+        assert_select "li", text: "colors.toml → background"
+      end
+    end
   end
 
   test "JSON is exactly the current versioned public report and has no audit side effects" do

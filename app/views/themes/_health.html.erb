@@ -47,7 +47,7 @@
 
     <% if health.available? %>
       <div class="mt-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 text-[10px] leading-relaxed text-muted-foreground">
-        <p><%= health.outdated? ? "Previous check" : "Checked" %> <%= time_tag health.checked_at, "#{health.checked_at.utc.to_fs(:long)} UTC" %> · Commit <%= link_to health.data["commit"][0, 7], "#{theme.repo}/commit/#{health.data['commit']}", class: "underline underline-offset-2" %> · Theme Report <%= health.data["analyzer_version"] %> · Rules <%= health.data["ruleset_version"] %></p>
+        <p><%= health.outdated? ? "Previous check" : "Checked" %> <%= time_tag health.checked_at, "#{health.checked_at.getutc.to_fs(:long)} UTC" %> · Commit <%= link_to health.data["commit"][0, 7], "#{theme.repo}/commit/#{health.data['commit']}", class: "underline underline-offset-2" %> · Theme Report <%= health.data["analyzer_version"] %> · Rules <%= health.data["ruleset_version"] %></p>
         <% if health.current? %><%= link_to "Report JSON", theme_health_path(theme), class: "inline-flex min-h-8 items-center hover:text-foreground" %><% end %>
       </div>
       <details class="mt-6 border-t border-border pt-4">

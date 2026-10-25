@@ -14,10 +14,10 @@
     <p class="mb-4 text-xs leading-relaxed text-muted-foreground"><%= area.last %>.</p>
     <div class="flex flex-col gap-2"><% issues.each do |finding| %><%= render "themes/health_finding", finding: finding %><% end %></div>
     <% if passed.any? %>
-      <details class="mt-4">
+      <details class="mt-4" data-health-passes>
         <summary class="flex min-h-8 cursor-pointer items-center gap-2 text-[11px] text-muted-foreground"><%= icon :check, class: "size-3.5" %><%= pluralize(passed.size, "check") %> meet targets</summary>
-        <ul class="mt-2 flex flex-col gap-2 border-t border-border pt-3 text-[11px] text-muted-foreground">
-          <% passed.each do |finding| %><li class="flex items-start gap-2"><%= icon :check, class: "size-3.5 shrink-0" %><span><%= health_rule_label(finding) %></span></li><% end %>
+        <ul class="mt-2 flex flex-col gap-2 border-t border-border pt-3">
+          <% passed.each do |finding| %><li><%= render "themes/health_finding", finding: finding %></li><% end %>
         </ul>
       </details>
     <% end %>
